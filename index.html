@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="en" data-lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LitUbik — systematic literature reviews, end to end</title>
+<meta name="description" content="LitUbik is a free, self-hosted web application for systematic literature reviews: protocol, search, deduplication, double screening, full text, snowballing, appraisal, extraction and PRISMA 2020. Optional AI assistance, always validated by a human.">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<meta property="og:title" content="LitUbik">
+<meta property="og:description" content="Systematic literature reviews, from protocol to PRISMA — self-hosted, open source, AI under human control.">
+<meta property="og:image" content="https://litubik.org/assets/pipeline.webp">
+<meta property="og:url" content="https://litubik.org/">
+<style>
+:root {
+  --blue: #1d4f82; --blue-soft: #e8f0f8; --orange: #ee7f1b; --orange-ink: #b45a08;
+  --bg: #fbfaf8; --surface: #ffffff; --ink: #1b1d22; --muted: #5b6270; --line: #e3e1dc;
+  --shot-bg: #ffffff;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --blue: #9cc4ea; --blue-soft: #1b2733; --orange: #f59a3f; --orange-ink: #f59a3f;
+    --bg: #141518; --surface: #1c1e22; --ink: #ecebe8; --muted: #a2a7b1; --line: #2e3137;
+    --shot-bg: #f4f4f2;
+  }
+}
+:root[data-theme="dark"] {
+  --blue: #9cc4ea; --blue-soft: #1b2733; --orange: #f59a3f; --orange-ink: #f59a3f;
+  --bg: #141518; --surface: #1c1e22; --ink: #ecebe8; --muted: #a2a7b1; --line: #2e3137;
+  --shot-bg: #f4f4f2;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font: 17px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+/* One language visible at a time: every bilingual text exists twice. */
+html[data-lang="en"] [lang="fr"], html[data-lang="fr"] [lang="en"] { display: none !important; }
+a { color: var(--blue); text-underline-offset: 3px; }
+a:hover { color: var(--orange-ink); }
+.wrap { max-width: 1080px; margin: 0 auto; padding: 0 16px; }
+
+header.top { border-bottom: 1px solid var(--line); background: var(--surface); }
+header.top .wrap { display: flex; align-items: center; justify-content: space-between; height: 60px; gap: 12px; }
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.15rem; color: var(--ink); text-decoration: none; }
+.brand img { width: 32px; height: 32px; }
+nav.top { display: flex; align-items: center; gap: 18px; font-size: .95rem; }
+nav.top a { color: var(--muted); text-decoration: none; }
+nav.top a:hover { color: var(--ink); }
+.lang { border: 1px solid var(--line); background: transparent; color: var(--ink); border-radius: 6px; padding: 4px 10px; font: inherit; font-size: .85rem; cursor: pointer; }
+@media (max-width: 640px) { nav.top a.hide-sm { display: none; } }
+
+.hero { padding: 72px 0 56px; }
+.hero .wrap { display: grid; grid-template-columns: 1fr 260px; gap: 48px; align-items: center; }
+.hero img.logo { width: 100%; max-width: 260px; justify-self: end; }
+@media (max-width: 760px) {
+  .hero { padding: 40px 0 32px; }
+  .hero .wrap { grid-template-columns: 1fr; gap: 24px; }
+  .hero img.logo { max-width: 140px; justify-self: start; order: -1; }
+}
+h1 { font-size: clamp(2rem, 5vw, 3rem); line-height: 1.12; margin: 0 0 18px; letter-spacing: -.02em; }
+h1 em { font-style: normal; color: var(--orange-ink); }
+.lead { font-size: 1.15rem; color: var(--muted); margin: 0 0 28px; max-width: 40em; }
+.ctas { display: flex; flex-wrap: wrap; gap: 12px; }
+.btn { display: inline-flex; align-items: center; gap: 8px; padding: 11px 20px; border-radius: 8px; font-weight: 600; text-decoration: none; border: 1px solid transparent; font-size: 1rem; }
+.btn.primary { background: var(--orange); color: #1b1d22; }
+.btn.primary:hover { filter: brightness(1.06); color: #1b1d22; }
+.btn.ghost { border-color: var(--line); color: var(--ink); background: var(--surface); }
+.btn.ghost:hover { border-color: var(--blue); color: var(--blue); }
+.btn.soon { border: 1px dashed var(--line); color: var(--muted); background: transparent; cursor: default; }
+.note { font-size: .9rem; color: var(--muted); margin-top: 14px; }
+
+section { padding: 56px 0; }
+section.alt { background: var(--surface); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+h2 { font-size: 1.7rem; line-height: 1.2; margin: 0 0 12px; letter-spacing: -.01em; }
+h3 { font-size: 1.12rem; margin: 0 0 6px; }
+.sub { color: var(--muted); margin: 0 0 28px; max-width: 46em; }
+
+figure { margin: 0; }
+.shot { background: var(--shot-bg); border: 1px solid var(--line); border-radius: 10px; padding: 10px; overflow: hidden; }
+.shot img { display: block; width: 100%; height: auto; border-radius: 4px; }
+figcaption { font-size: .88rem; color: var(--muted); margin-top: 10px; }
+
+.feature { display: grid; grid-template-columns: 1fr 1.3fr; gap: 40px; align-items: center; margin-top: 48px; }
+.feature.flip { grid-template-columns: 1.3fr 1fr; }
+.feature.flip .text { order: 2; }
+@media (max-width: 860px) {
+  .feature, .feature.flip { grid-template-columns: 1fr; gap: 20px; }
+  .feature.flip .text { order: 0; }
+}
+.feature ul { padding-left: 1.1em; margin: 10px 0 0; color: var(--muted); }
+.feature li { margin: 4px 0; }
+
+.cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+@media (max-width: 860px) { .cards { grid-template-columns: 1fr; } }
+.card { background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 22px; }
+section:not(.alt) .card { background: var(--surface); }
+.card p { margin: 0; color: var(--muted); font-size: .97rem; }
+.card .tag { display: inline-block; font-size: .75rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--orange-ink); margin-bottom: 8px; }
+
+footer { padding: 40px 0 56px; font-size: .9rem; color: var(--muted); border-top: 1px solid var(--line); }
+footer .cols { display: grid; grid-template-columns: 1.2fr 1fr; gap: 32px; }
+@media (max-width: 760px) { footer .cols { grid-template-columns: 1fr; } }
+footer h4 { color: var(--ink); font-size: .95rem; margin: 0 0 8px; }
+footer p { margin: 0 0 8px; }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#"><img src="assets/favicon.svg" alt="" width="32" height="32">LitUbik</a>
+    <nav class="top" aria-label="Main">
+      <a class="hide-sm" href="#features"><span lang="en">Features</span><span lang="fr">Fonctionnalités</span></a>
+      <a class="hide-sm" href="#install"><span lang="en">Get it</span><span lang="fr">L'obtenir</span></a>
+      <a href="https://demo.litubik.org"><span lang="en">Demo</span><span lang="fr">Démo</span></a>
+      <button class="lang" id="lang" type="button" aria-label="Changer de langue / Switch language">FR</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <h1>
+        <span lang="en">Systematic reviews, <em>from protocol to PRISMA</em>, in one place.</span>
+        <span lang="fr">La revue systématique, <em>du protocole au PRISMA</em>, au même endroit.</span>
+      </h1>
+      <p class="lead">
+        <span lang="en">LitUbik is a free, open-source web application that carries a systematic literature review through every step — search, deduplication, double-blind screening, full text, snowballing, appraisal, extraction and reporting — for a team of reviewers, with AI help that is never applied without a human.</span>
+        <span lang="fr">LitUbik est une application web libre et gratuite qui mène une revue systématique de la littérature à travers toutes ses étapes — recherche, dédoublonnage, screening en double aveugle, texte intégral, snowballing, évaluation, extraction et rédaction — pour une équipe de relecteurs, avec une aide IA qui n'est jamais appliquée sans validation humaine.</span>
+      </p>
+      <div class="ctas">
+        <a class="btn primary" href="https://demo.litubik.org">
+          <span lang="en">Try the demo</span><span lang="fr">Essayer la démo</span> →
+        </a>
+        <a class="btn ghost" href="https://app.litubik.org">
+          <span lang="en">Sign in</span><span lang="fr">Se connecter</span>
+        </a>
+        <!-- Replace with <a class="btn ghost" href="https://github.com/abequet/litubik_public"> once the repository is public. -->
+        <span class="btn soon">
+          <span lang="en">Source code &amp; Windows app — coming with v1.0</span><span lang="fr">Code source &amp; appli Windows — à la sortie de la v1.0</span>
+        </span>
+      </div>
+      <p class="note">
+        <span lang="en">The demo opens a private guest session in one click: no e-mail, no account.</span>
+        <span lang="fr">La démo ouvre une session invitée privée en un clic : ni e-mail, ni compte.</span>
+      </p>
+    </div>
+    <img class="logo" src="assets/logo.svg" alt="LitUbik logo: a citation tree" width="260" height="260">
+  </div>
+</section>
+
+<section class="alt" id="pipeline">
+  <div class="wrap">
+    <h2><span lang="en">The whole pipeline, twelve steps</span><span lang="fr">Toute la chaîne, en douze étapes</span></h2>
+    <p class="sub">
+      <span lang="en">Each step feeds the next, and everything is recorded: the PRISMA 2020 flow diagram and the Methods section are written from what actually happened, not from memory. Steps marked ✦ offer optional AI assistance.</span>
+      <span lang="fr">Chaque étape alimente la suivante et tout est consigné : le diagramme PRISMA 2020 et la section Méthodes sont écrits à partir de ce qui s'est réellement passé, pas de mémoire. Les étapes marquées ✦ proposent une aide IA optionnelle.</span>
+    </p>
+    <figure class="shot">
+      <img src="assets/pipeline.webp" width="1600" height="690" loading="lazy"
+           alt="The LitUbik pipeline: identification (protocol, search equations, search and imports, deduplication), screening (title/abstract screening, full-text retrieval, full-text screening, snowballing), then appraisal and extraction, synthesis, PRISMA 2020 diagram and reporting.">
+    </figure>
+  </div>
+</section>
+
+<section id="features">
+  <div class="wrap">
+    <h2><span lang="en">Built for real review teams</span><span lang="fr">Pensé pour de vraies équipes de revue</span></h2>
+
+    <div class="feature">
+      <div class="text">
+        <h3><span lang="en">Double-blind screening, measured</span><span lang="fr">Screening en double aveugle, mesuré</span></h3>
+        <p>
+          <span lang="en">Reviewers vote one record at a time with keyboard shortcuts and the coded eligibility criteria in view. Blinding is enforced by the server; conflicts go to an arbitration queue.</span>
+          <span lang="fr">Les relecteurs votent fiche par fiche, au clavier, avec les critères d'éligibilité codés sous les yeux. L'aveugle est garanti par le serveur ; les désaccords partent dans une file d'arbitrage.</span>
+        </p>
+        <ul>
+          <li><span lang="en">Cohen's and Fleiss' κ, per-reviewer load, vote cross-matrix</span><span lang="fr">κ de Cohen et de Fleiss, charge par relecteur, matrice croisée des votes</span></li>
+          <li><span lang="en">AI suggestions with their reasoning, criterion by criterion — your vote stays yours</span><span lang="fr">Suggestions IA argumentées, critère par critère — le vote reste le vôtre</span></li>
+          <li><span lang="en">AI title triage for broad searches, validated as a checklist</span><span lang="fr">Tri IA des titres pour les recherches larges, validé sous forme de liste</span></li>
+        </ul>
+      </div>
+      <figure class="shot">
+        <img src="assets/screening.webp" width="1400" height="1043" loading="lazy"
+             alt="Screening view: a record with its abstract, include / maybe / exclude buttons, the coded eligibility criteria and an AI suggestion with its reasoning.">
+      </figure>
+    </div>
+
+    <div class="feature flip">
+      <div class="text">
+        <h3><span lang="en">Snowballing you can see — and undo</span><span lang="fr">Un snowballing visible — et réversible</span></h3>
+        <p>
+          <span lang="en">Backward and forward citation searching runs in rounds seeded by the included papers. Each round's discoveries go back through screening, and the latest round can be removed as a block if it was seeded by mistake.</span>
+          <span lang="fr">La recherche de citations, en amont et en aval, avance par itérations à partir des articles inclus. Les découvertes de chaque itération repassent par le screening, et la dernière itération peut être retirée d'un bloc si elle est partie d'une erreur.</span>
+        </p>
+        <ul>
+          <li><span lang="en">Citation network per iteration</span><span lang="fr">Réseau de citations par itération</span></li>
+          <li><span lang="en">Full-text retrieval from open-access sources, your library proxy, or upload</span><span lang="fr">Récupération du texte intégral en accès ouvert, via le proxy de votre bibliothèque, ou par dépôt</span></li>
+        </ul>
+      </div>
+      <figure class="shot">
+        <img src="assets/network.webp" width="1200" height="1089" loading="lazy"
+             alt="Citation network: seed papers in blue, included papers in green, excluded clusters in orange, with backward and forward citation links.">
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section class="alt">
+  <div class="wrap">
+    <h2><span lang="en">Principles</span><span lang="fr">Principes</span></h2>
+    <div class="cards" style="margin-top:24px">
+      <div class="card">
+        <span class="tag"><span lang="en">Human in charge</span><span lang="fr">L'humain décide</span></span>
+        <h3><span lang="en">AI proposes, people decide</span><span lang="fr">L'IA propose, l'humain tranche</span></h3>
+        <p>
+          <span lang="en">Every AI output waits for a human validation. Each call is logged, and the AI-use disclosure for your paper is drafted from that journal.</span>
+          <span lang="fr">Toute sortie de l'IA attend une validation humaine. Chaque appel est journalisé, et la déclaration d'usage de l'IA pour votre article est rédigée à partir de ce journal.</span>
+        </p>
+      </div>
+      <div class="card">
+        <span class="tag"><span lang="en">Your data</span><span lang="fr">Vos données</span></span>
+        <h3><span lang="en">Self-hosted</span><span lang="fr">Auto-hébergé</span></h3>
+        <p>
+          <span lang="en">Run it on your laptop, your lab server or your university's. Bring your own AI key — Anthropic, OpenAI, Gemini, Mistral, Grok — or a local model.</span>
+          <span lang="fr">Sur votre portable, le serveur du labo ou celui de l'université. Avec votre propre clé IA — Anthropic, OpenAI, Gemini, Mistral, Grok — ou un modèle local.</span>
+        </p>
+      </div>
+      <div class="card">
+        <span class="tag"><span lang="en">Open</span><span lang="fr">Ouvert</span></span>
+        <h3><span lang="en">Free software, AGPLv3</span><span lang="fr">Logiciel libre, AGPLv3</span></h3>
+        <p>
+          <span lang="en">No subscription, no per-seat price. The code, the standards it follows (PRISMA 2020, PRISMA-S, SWiM, JBI, MMAT) and the exports stay open.</span>
+          <span lang="fr">Ni abonnement ni prix par utilisateur. Le code, les standards suivis (PRISMA 2020, PRISMA-S, SWiM, JBI, MMAT) et les exports restent ouverts.</span>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="install">
+  <div class="wrap">
+    <h2><span lang="en">Three ways to use it</span><span lang="fr">Trois façons de l'utiliser</span></h2>
+    <div class="cards" style="margin-top:24px">
+      <div class="card">
+        <span class="tag"><span lang="en">Try</span><span lang="fr">Essayer</span></span>
+        <h3><a href="https://demo.litubik.org"><span lang="en">Online demo</span><span lang="fr">Démo en ligne</span></a></h3>
+        <p>
+          <span lang="en">A private guest session with sample projects. Nothing to install; the demo is reset every night.</span>
+          <span lang="fr">Une session invitée privée avec des projets d'exemple. Rien à installer ; la démo est remise à zéro chaque nuit.</span>
+        </p>
+      </div>
+      <div class="card">
+        <span class="tag">Windows</span>
+        <h3><span lang="en">Desktop app</span><span lang="fr">Application de bureau</span></h3>
+        <p>
+          <span lang="en">Unzip and run <code>LitUbik.exe</code>: no Python, no terminal. Download available with version 1.0.</span>
+          <span lang="fr">Décompresser et lancer <code>LitUbik.exe</code> : ni Python ni terminal. Téléchargement disponible avec la version 1.0.</span>
+        </p>
+      </div>
+      <div class="card">
+        <span class="tag"><span lang="en">Server</span><span lang="fr">Serveur</span></span>
+        <h3><span lang="en">Lab or university server</span><span lang="fr">Serveur de labo ou d'université</span></h3>
+        <p>
+          <span lang="en">One <code>docker compose up</code> for a shared instance; reviewers work from their browser. Instances can also sync through a shared folder.</span>
+          <span lang="fr">Un <code>docker compose up</code> pour une instance partagée ; les relecteurs travaillent depuis leur navigateur. Plusieurs instances peuvent aussi se synchroniser via un dossier partagé.</span>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap cols">
+    <div>
+      <h4>LitUbik</h4>
+      <p>
+        <span lang="en">Design and development:</span><span lang="fr">Conception et développement :</span>
+        <a href="https://pagespro.univ-gustave-eiffel.fr/adolphe-bequet">Adolphe J. Béquet</a> ·
+        <span lang="en">User-interface design:</span><span lang="fr">Conception de l'interface :</span> Sébastien Laurent ·
+        <span lang="en">Validation and second reviewer:</span><span lang="fr">Validation et second relecteur :</span> Baptiste Bouvier
+      </p>
+      <p>
+        <span lang="en">Contact:</span><span lang="fr">Contact :</span>
+        <a href="mailto:contact@litubik.org">contact@litubik.org</a>
+      </p>
+    </div>
+    <div id="legal">
+      <h4><span lang="en">Legal notice</span><span lang="fr">Mentions légales</span></h4>
+      <p>
+        <span lang="en">Publisher: Adolphe J. Béquet — contact@litubik.org. Host: GitHub, Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, USA.</span>
+        <span lang="fr">Éditeur : Adolphe J. Béquet — contact@litubik.org. Hébergeur : GitHub, Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, États-Unis.</span>
+      </p>
+      <p>
+        <span lang="en">This page sets no cookies and loads nothing from third parties. The demo and the hosted app have their own</span>
+        <span lang="fr">Cette page ne dépose aucun cookie et ne charge rien depuis des tiers. La démo et l'application hébergée ont leurs propres</span>
+        <a href="https://demo.litubik.org/legal/notice"><span lang="en">legal pages</span><span lang="fr">pages légales</span></a>.
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var root = document.documentElement, btn = document.getElementById('lang');
+  function set(lang) {
+    root.setAttribute('data-lang', lang);
+    root.setAttribute('lang', lang);
+    btn.textContent = lang === 'fr' ? 'EN' : 'FR';
+    document.title = lang === 'fr'
+      ? 'LitUbik — la revue systématique de littérature, de bout en bout'
+      : 'LitUbik — systematic literature reviews, end to end';
+  }
+  var saved = null;
+  try { saved = localStorage.getItem('litubik-lang'); } catch (e) {}
+  set(saved || ((navigator.language || '').toLowerCase().indexOf('fr') === 0 ? 'fr' : 'en'));
+  btn.addEventListener('click', function () {
+    var next = root.getAttribute('data-lang') === 'fr' ? 'en' : 'fr';
+    set(next);
+    try { localStorage.setItem('litubik-lang', next); } catch (e) {}
+  });
+})();
+</script>
+</body>
+</html>

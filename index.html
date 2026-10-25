@@ -67,7 +67,6 @@ h1 em { font-style: normal; color: var(--orange-ink); }
 .btn.primary:hover { filter: brightness(1.06); color: #1b1d22; }
 .btn.ghost { border-color: var(--line); color: var(--ink); background: var(--surface); }
 .btn.ghost:hover { border-color: var(--blue); color: var(--blue); }
-.btn.soon { border: 1px dashed var(--line); color: var(--muted); background: transparent; cursor: default; }
 .note { font-size: .9rem; color: var(--muted); margin-top: 14px; }
 
 section { padding: 56px 0; }
@@ -135,17 +134,17 @@ footer p { margin: 0 0 8px; }
         <a class="btn primary" href="https://demo.litubik.org">
           <span lang="en">Try the demo</span><span lang="fr">Essayer la démo</span> →
         </a>
-        <a class="btn ghost" href="https://app.litubik.org">
-          <span lang="en">Sign in</span><span lang="fr">Se connecter</span>
+        <a class="btn ghost" href="https://github.com/abequet/litubik_public/releases/latest">
+          <span lang="en">Download for Windows</span><span lang="fr">Télécharger pour Windows</span>
         </a>
-        <!-- Replace with <a class="btn ghost" href="https://github.com/abequet/litubik_public"> once the repository is public. -->
-        <span class="btn soon">
-          <span lang="en">Source code &amp; Windows app — coming with v1.0</span><span lang="fr">Code source &amp; appli Windows — à la sortie de la v1.0</span>
-        </span>
+        <a class="btn ghost" href="https://github.com/abequet/litubik_public">
+          <span lang="en">Source code</span><span lang="fr">Code source</span>
+        </a>
       </div>
       <p class="note">
-        <span lang="en">The demo opens a private guest session in one click: no e-mail, no account.</span>
-        <span lang="fr">La démo ouvre une session invitée privée en un clic : ni e-mail, ni compte.</span>
+        <span lang="en">The demo opens a private guest session in one click: no e-mail, no account. Already have an account?</span>
+        <span lang="fr">La démo ouvre une session invitée privée en un clic : ni e-mail, ni compte. Vous avez déjà un compte ?</span>
+        <a href="https://app.litubik.org"><span lang="en">Sign in</span><span lang="fr">Se connecter</span></a>.
       </p>
     </div>
     <img class="logo" src="assets/logo.svg" alt="LitUbik logo: a citation tree" width="260" height="260">
@@ -255,15 +254,15 @@ footer p { margin: 0 0 8px; }
       </div>
       <div class="card">
         <span class="tag">Windows</span>
-        <h3><span lang="en">Desktop app</span><span lang="fr">Application de bureau</span></h3>
+        <h3><a href="https://github.com/abequet/litubik_public/releases/latest"><span lang="en">Desktop app</span><span lang="fr">Application de bureau</span></a></h3>
         <p>
-          <span lang="en">Unzip and run <code>LitUbik.exe</code>: no Python, no terminal. Download available with version 1.0.</span>
-          <span lang="fr">Décompresser et lancer <code>LitUbik.exe</code> : ni Python ni terminal. Téléchargement disponible avec la version 1.0.</span>
+          <span lang="en">Download the zip from the latest release, unzip and run <code>LitUbik.exe</code>: no Python, no terminal.</span>
+          <span lang="fr">Télécharger le zip de la dernière version, le décompresser et lancer <code>LitUbik.exe</code> : ni Python ni terminal.</span>
         </p>
       </div>
       <div class="card">
         <span class="tag"><span lang="en">Server</span><span lang="fr">Serveur</span></span>
-        <h3><span lang="en">Lab or university server</span><span lang="fr">Serveur de labo ou d'université</span></h3>
+        <h3><a href="https://github.com/abequet/litubik_public/blob/main/docs/DEPLOYMENT.md"><span lang="en">Lab or university server</span><span lang="fr">Serveur de labo ou d'université</span></a></h3>
         <p>
           <span lang="en">One <code>docker compose up</code> for a shared instance; reviewers work from their browser. Instances can also sync through a shared folder.</span>
           <span lang="fr">Un <code>docker compose up</code> pour une instance partagée ; les relecteurs travaillent depuis leur navigateur. Plusieurs instances peuvent aussi se synchroniser via un dossier partagé.</span>
@@ -286,7 +285,9 @@ footer p { margin: 0 0 8px; }
       </p>
       <p>
         <span lang="en">Contact:</span><span lang="fr">Contact :</span>
-        <a href="mailto:contact@litubik.org">contact@litubik.org</a>
+        <a href="mailto:contact@litubik.org">contact@litubik.org</a> ·
+        <a href="https://github.com/abequet/litubik_public"><span lang="en">Source code</span><span lang="fr">Code source</span></a> (AGPLv3) ·
+        <a href="https://github.com/abequet/litubik_public/issues"><span lang="en">Report an issue</span><span lang="fr">Signaler un problème</span></a>
       </p>
     </div>
     <div id="legal">

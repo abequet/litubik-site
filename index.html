@@ -109,13 +109,22 @@ footer .cols { display: grid; grid-template-columns: 1.2fr 1fr; gap: 32px; }
 footer h4 { color: var(--ink); font-size: .95rem; margin: 0 0 8px; }
 footer p { margin: 0 0 8px; }
 footer .name-note { margin-bottom: 14px; padding-left: 12px; border-left: 3px solid var(--orange); }
+/* Header name: on hover its letters move to spell "Bulk It !" (built by the script below). */
+.brand .name { position: relative; display: inline-block; white-space: pre; }
+.brand .name.anagram { height: 1.6em; }
+.name .ch { position: absolute; left: 0; top: 0; }
+.name .hop { display: inline-grid; }
+.name .g { grid-area: 1 / 1; justify-self: start; }
+.name .bang { color: var(--orange-ink); }
+.name-measure { position: absolute; left: 0; top: 0; visibility: hidden; display: inline-block; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 </style>
 </head>
 <body>
 
 <header class="top">
   <div class="wrap">
-    <a class="brand" href="#"><img src="assets/favicon.svg" alt="" width="32" height="32">LitUbik</a>
+    <a class="brand" href="#"><img src="assets/favicon.svg" alt="" width="32" height="32"><span class="name">LitUbik</span></a>
     <nav class="top" aria-label="Main">
       <a class="hide-sm" href="#features"><span lang="en">Features</span><span lang="fr">Fonctionnalités</span></a>
       <a class="hide-sm" href="#install"><span lang="en">Get it</span><span lang="fr">L'obtenir</span></a>
@@ -393,6 +402,89 @@ footer .name-note { margin-bottom: 14px; padding-left: 12px; border-left: 3px so
       });
     });
   });
+})();
+// The name is an anagram of "Bulk It !": the second i flips over to become the "!".
+(function () {
+  var name = document.querySelector('.brand .name');
+  if (!name || !name.animate) return;
+  var SRC = 'LitUbik', DST = 'Bulk It !';
+  var MAP = [2, 5, 6, 1, 0, 8, 3]; // where each letter of SRC lands in DST
+  function measure(text) {
+    var box = document.createElement('span');
+    box.className = 'name-measure';
+    var spans = text.split('').map(function (c) {
+      var s = document.createElement('span');
+      s.textContent = c;
+      return box.appendChild(s);
+    });
+    name.appendChild(box);
+    var m = { xs: spans.map(function (s) { return s.offsetLeft; }), w: box.offsetWidth };
+    name.removeChild(box);
+    return m;
+  }
+  var a = measure(SRC), b = measure(DST);
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var D = reduce ? 1 : 1000, STAGGER = reduce ? 0 : 70, END = D + STAGGER * (SRC.length - 1);
+  var anims = [];
+  name.textContent = '';
+  name.classList.add('anagram');
+  var label = document.createElement('span');
+  label.className = 'sr-only';
+  label.textContent = SRC;
+  name.appendChild(label);
+  function glyph(parent, c, cls) {
+    var g = document.createElement('span');
+    g.className = 'g' + (cls ? ' ' + cls : '');
+    g.textContent = c;
+    return parent.appendChild(g);
+  }
+  function timing(i) {
+    return { duration: D, delay: i * STAGGER, endDelay: END - D - i * STAGGER, fill: 'both' };
+  }
+  SRC.split('').forEach(function (c, i) {
+    var to = DST.charAt(MAP[i]), x0 = a.xs[i], x1 = b.xs[MAP[i]];
+    var ch = document.createElement('span'), hop = document.createElement('span');
+    ch.className = 'ch';
+    ch.setAttribute('aria-hidden', 'true');
+    hop.className = 'hop';
+    ch.appendChild(hop);
+    name.appendChild(ch);
+    var t = timing(i);
+    t.easing = 'cubic-bezier(.65,0,.35,1)';
+    anims.push(ch.animate([{ transform: 'translateX(' + x0 + 'px)' }, { transform: 'translateX(' + x1 + 'px)' }], t));
+    // Letters moving right jump over, letters moving left duck under.
+    var dy = Math.abs(x1 - x0) < 2 ? 0 : (x1 > x0 ? -0.45 : 0.4);
+    anims.push(hop.animate([
+      { transform: 'translateY(0)', easing: 'ease-out' },
+      { transform: 'translateY(' + dy + 'em)', offset: 0.5, easing: 'ease-in' },
+      { transform: 'translateY(0)' }
+    ], timing(i)));
+    var g0 = glyph(hop, c);
+    if (to === c) return;
+    var g1 = glyph(hop, to, to === '!' ? 'bang' : '');
+    var out = [{ opacity: 1 }, { opacity: 1, offset: 0.35 }, { opacity: 0, offset: 0.65 }, { opacity: 0 }];
+    var inn = [{ opacity: 0 }, { opacity: 0, offset: 0.35 }, { opacity: 1, offset: 0.65 }, { opacity: 1 }];
+    if (to === '!') { // the spare i turns upside down on the way
+      out.forEach(function (k, j) { k.transform = 'rotate(' + [0, 63, 117, 180][j] + 'deg)'; });
+      inn.forEach(function (k, j) { k.transform = 'rotate(' + [-180, -117, -63, 0][j] + 'deg)'; });
+    }
+    anims.push(g0.animate(out, timing(i)), g1.animate(inn, timing(i)));
+  });
+  anims.push(name.animate([{ width: a.w + 'px' }, { width: b.w + 'px' }], { duration: END, easing: 'cubic-bezier(.65,0,.35,1)', fill: 'both' }));
+  anims.forEach(function (an) { an.pause(); });
+  var brand = name.parentNode, hovered = false, focused = false, on = false;
+  function update() {
+    if ((hovered || focused) === on) return;
+    on = !on;
+    anims.forEach(function (an) {
+      an.playbackRate = on ? 1 : -1;
+      an.play();
+    });
+  }
+  brand.addEventListener('mouseenter', function () { hovered = true; update(); });
+  brand.addEventListener('mouseleave', function () { hovered = false; update(); });
+  brand.addEventListener('focus', function () { focused = true; update(); });
+  brand.addEventListener('blur', function () { focused = false; update(); });
 })();
 </script>
 </body>

@@ -110,6 +110,9 @@ footer .cols { display: grid; grid-template-columns: 1.2fr 1fr; gap: 32px; }
 @media (max-width: 760px) { footer .cols { grid-template-columns: minmax(0, 1fr); } }
 footer h4 { color: var(--ink); font-size: .95rem; margin: 0 0 8px; }
 footer p { margin: 0 0 8px; }
+.ubik { max-width: 720px; margin: -32px auto 0; padding: 0 16px 28px; text-align: center; font-size: .78rem; font-style: italic; line-height: 1.5; color: var(--muted); }
+.ubik a { color: inherit; }
+.ubik a:hover { color: var(--orange-ink); }
 footer .name-note { margin-bottom: 14px; padding-left: 12px; border-left: 3px solid var(--orange); }
 /* Header name: on hover its letters move to spell "Bulk It !" (built by the script below). */
 .brand .name { position: relative; display: inline-block; white-space: pre; }
@@ -374,6 +377,59 @@ footer .name-note { margin-bottom: 14px; padding-left: 12px; border-left: 3px so
     </div>
   </div>
 </footer>
+<!-- A nod to Ubik: every chapter of the novel opens on a mock ad that ends with
+     "Safe when used as directed". One drawn at random per load; hidden without JS. -->
+<p class="ubik" id="ubik" hidden></p>
+<script>
+(function () {
+  var ADS = {
+    en: [
+      'Is your corpus decaying? Duplicates multiplying overnight? One pass of LitUbik and order is restored.',
+      'PDFs turning back into microfiche, microfiche into index cards? LitUbik stops the regression.',
+      'I am included and you are excluded. LitUbik.',
+      'An inclusion criterion dissolving at the touch? One spray of LitUbik and it holds its shape again.',
+      'Two reviewers disagree? One drop of LitUbik and the third one decides. Keep out of reach of narrative reviews.',
+      'Ask your librarian for LitUbik. They always keep some under the counter.',
+      'Search string ageing faster than you? That’s half-life. LitUbik slows it down.',
+      'Your 2024 references look like 1939? Shake LitUbik well before use. Do not swallow.',
+      'LitUbik is everywhere. It was there before your first query.'
+    ],
+    // plain space before ? and !, turned into a narrow no-break space below
+    fr: [
+      'Votre corpus se dégrade ? Vos doublons se multiplient pendant la nuit ? Une seule passe de LitUbik et tout rentre dans l’ordre.',
+      'Vos PDF redeviennent des microfiches, vos microfiches des fiches bristol ? LitUbik arrête la régression.',
+      'Je suis inclus et vous êtes exclus. LitUbik.',
+      'Un critère d’inclusion qui se dissout au toucher ? Une pulvérisation de LitUbik et il reprend sa forme.',
+      'Deux relecteurs en désaccord ? Une goutte de LitUbik, et le troisième tranche. Tenir hors de portée des revues narratives.',
+      'Demandez LitUbik à votre bibliothécaire. Il en garde toujours sous le comptoir.',
+      'Votre équation de recherche vieillit plus vite que vous ? C’est la semi-vie. LitUbik la ralentit.',
+      'Vos références de 2024 ressemblent à celles de 1939 ? Agiter LitUbik avant emploi. Ne pas avaler.',
+      'LitUbik est partout. Il était déjà là avant votre première requête.'
+    ]
+  };
+  var TAG = {
+    en: ['Safe when used as ', 'directed'],
+    fr: ['Utilisé conformément au ', 'mode d’emploi']
+  };
+  var HELP = 'https://github.com/abequet/litubik_public/tree/main/docs/help/';
+  var i = Math.floor(Math.random() * ADS.en.length);
+  var p = document.getElementById('ubik');
+  ['en', 'fr'].forEach(function (lang) {
+    var span = document.createElement('span');
+    span.lang = lang;
+    var text = ADS[lang][i];
+    if (lang === 'fr') text = text.replace(/ ([?!])/g, ' $1');
+    span.appendChild(document.createTextNode(text + ' ' + TAG[lang][0]));
+    var a = document.createElement('a');
+    a.href = HELP + lang;
+    a.textContent = TAG[lang][1];
+    span.appendChild(a);
+    span.appendChild(document.createTextNode('.'));
+    p.appendChild(span);
+  });
+  p.hidden = false;
+})();
+</script>
 
 <script>
 (function () {

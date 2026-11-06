@@ -120,7 +120,11 @@ footer .name-note { margin-bottom: 14px; padding-left: 12px; border-left: 3px so
 .name .ch { position: absolute; left: 0; top: 0; }
 .name .hop { display: inline-grid; }
 .name .g { grid-area: 1 / 1; justify-self: start; }
-.name .bang { color: var(--orange-ink); }
+/* Wordmark colours: "Lit" orange, "Ubik" blue (the logo's own shades in dark
+   mode, darker ones in light mode to stay readable on white). Each letter keeps
+   its colour through the anagram, so "Bulk It !" comes out mixed. */
+.name .wm-lit { color: var(--orange-ink); }
+.name .wm-ubik { color: var(--blue); }
 .name-measure { position: absolute; left: 0; top: 0; visibility: hidden; display: inline-block; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 </style>
@@ -129,7 +133,7 @@ footer .name-note { margin-bottom: 14px; padding-left: 12px; border-left: 3px so
 
 <header class="top">
   <div class="wrap">
-    <a class="brand" href="#"><img src="assets/favicon-192.png" alt="" width="32" height="32"><span class="name">LitUbik</span></a>
+    <a class="brand" href="#"><img src="assets/favicon-192.png" alt="" width="32" height="32"><span class="name"><span class="wm-lit">Lit</span><span class="wm-ubik">Ubik</span></span></a>
     <nav class="top" aria-label="Main">
       <a class="hide-sm" href="#features"><span lang="en">Features</span><span lang="fr">Fonctionnalités</span></a>
       <a class="hide-sm" href="#install"><span lang="en">Get it</span><span lang="fr">L'obtenir</span></a>
@@ -503,7 +507,7 @@ footer .name-note { margin-bottom: 14px; padding-left: 12px; border-left: 3px so
   SRC.split('').forEach(function (c, i) {
     var to = DST.charAt(MAP[i]), x0 = a.xs[i], x1 = b.xs[MAP[i]];
     var ch = document.createElement('span'), hop = document.createElement('span');
-    ch.className = 'ch';
+    ch.className = 'ch ' + (i < 3 ? 'wm-lit' : 'wm-ubik');
     ch.setAttribute('aria-hidden', 'true');
     hop.className = 'hop';
     ch.appendChild(hop);
@@ -520,7 +524,7 @@ footer .name-note { margin-bottom: 14px; padding-left: 12px; border-left: 3px so
     ], timing(i)));
     var g0 = glyph(hop, c);
     if (to === c) return;
-    var g1 = glyph(hop, to, to === '!' ? 'bang' : '');
+    var g1 = glyph(hop, to);
     var out = [{ opacity: 1 }, { opacity: 1, offset: 0.35 }, { opacity: 0, offset: 0.65 }, { opacity: 0 }];
     var inn = [{ opacity: 0 }, { opacity: 0, offset: 0.35 }, { opacity: 1, offset: 0.65 }, { opacity: 1 }];
     if (to === '!') { // the spare i turns upside down on the way
